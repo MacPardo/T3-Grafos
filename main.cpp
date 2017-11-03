@@ -21,8 +21,9 @@ bool has_cycle(graph g, int v) {
   return dfs(v, -1);
 }
 
-graph kruskal(graph g) {
+pair<graph, int> kruskal(graph g) {
   uint32_t added_edges = 0;
+  int total_weight = 0;
   set<tuple<int, int, int> > edges;
   graph k(g.size());
   for (uint32_t i = 0; i < g.size(); i++) {
@@ -39,11 +40,12 @@ graph kruskal(graph g) {
     test[get<2>(*it)].push_back(pair<int, int>(get<0>(*it), get<1>(*it)));
     if (!has_cycle(test, get<1>(*it))) {
       added_edges++;
+      total_weight += get<0>(*it);
       k[get<1>(*it)].push_back(pair<int, int>(get<0>(*it), get<2>(*it)));
       k[get<2>(*it)].push_back(pair<int, int>(get<0>(*it), get<1>(*it)));
     }
   }
-  return k;
+  return pair<graph, int>(k, total_weight);
 }
 
 void prt_grafo(graph g) {
@@ -66,10 +68,12 @@ int main(void) {
     g[a].push_back(pair<int, int>(w, b));
     g[b].push_back(pair<int, int>(w, a));
   }
+  cout << "GRAFO 1:\n";
   prt_grafo(g);
-  cout << (has_cycle(g, 0) ? "true" : "false") << '\n';
 
-  graph k = kruskal(g);
-  prt_grafo(k);
+  pair<graph, int> ans = kruskal(g);
+  cout << "ÁRVORE GERADORA MÍNIMA DO GRAFO 1:\n";
+  prt_grafo(ans.first);
+  cout << "Peso total do grafo: " << ans.second << '\n';
   return 0;
 }
